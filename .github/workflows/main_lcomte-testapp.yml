@@ -30,7 +30,7 @@ jobs:
             echo "$FILE exists!"
           else
             echo "$FILE does not exist!"
-            cp "env.example" "$FILE"
+            cp "env-example" "$FILE"
           fi          
 
       - name: npm install, build, and test
