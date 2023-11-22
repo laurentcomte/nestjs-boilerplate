@@ -17,7 +17,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -65,7 +65,6 @@
     "typeorm": "0.3.17"
   },
   "devDependencies": {
-    "@nestjs/cli": "10.2.1",
     "@nestjs/schematics": "10.0.3",
     "@nestjs/testing": "^10.2.10",
     "@types/bcryptjs": "2.4.6",
