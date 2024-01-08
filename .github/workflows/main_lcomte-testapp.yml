@@ -16,7 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test secret
+      - name: Test GITHUB secret
+        shell: bash
+        env:
+          TEST: ${{ secrets.TEST }}
         run : |
           echo "$TEST"
 
