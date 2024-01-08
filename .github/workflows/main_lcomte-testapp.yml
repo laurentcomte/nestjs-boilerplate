@@ -16,6 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Test secret
+        run : |
+          echo "$TEST"
+
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
