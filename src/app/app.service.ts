@@ -6,11 +6,11 @@ export class AppService {
   constructor(private readonly configService: ConfigService) {}
 
   status(): 'OK' {
-    this.detailedStatus();
+    this.config();
     return 'OK';
   }
 
-  detailedStatus(): ConfigService {
+  config(): ConfigService {
     return this.configService;
   }
 }

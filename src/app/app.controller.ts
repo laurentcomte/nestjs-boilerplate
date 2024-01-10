@@ -4,10 +4,15 @@ import {
   HttpCode,
   HttpStatus,
   SerializeOptions,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/roles/roles.enum';
+import { RolesGuard } from 'src/roles/roles.guard';
 
 @ApiTags('App')
 @Controller({
@@ -23,12 +28,27 @@ export class AppController {
     return this.service.status();
   }
 
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @SerializeOptions({
     groups: ['admin'],
   })
-  @Get('detailedStatus')
+  @Get('config')
   @HttpCode(HttpStatus.OK)
-  public detailedStatus(): ConfigService {
-    return this.service.detailedStatus();
+  public config(): ConfigService {
+    return this.service.config();
+  }
+
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @SerializeOptions({
+    groups: ['admin'],
+  })
+  @Get('env')
+  @HttpCode(HttpStatus.OK)
+  public env(): NodeJS.ProcessEnv {
+    return process.env;
   }
 }
