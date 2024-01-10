@@ -9,7 +9,7 @@ import {
   ValidateIf,
   IsBoolean,
 } from 'class-validator';
-import validateConfig from 'src/utils/validate-config';
+import validateConfig from '../../utils/validate-config';
 
 class EnvironmentVariablesValidator {
   @ValidateIf((envValues) => envValues.DATABASE_URL)
@@ -77,6 +77,7 @@ export default registerAs<DatabaseConfig>('database', () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   return {
+    isDocumentDatabase: ['mongodb'].includes(process.env.DATABASE_TYPE ?? ''),
     url: process.env.DATABASE_URL,
     type: process.env.DATABASE_TYPE,
     host: process.env.DATABASE_HOST,

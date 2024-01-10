@@ -28,6 +28,9 @@ import { AllConfigType } from './config/config.type';
 import { SessionModule } from './session/session.module';
 import { MailerModule } from './mailer/mailer.module';
 import { AppModule as AppStatusModule } from './app/app.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseConfigService } from './database/mongoose-config.service';
+import { DatabaseConfig } from './database/config/database-config.type';
 
 @Module({
   imports: [
@@ -46,12 +49,16 @@ import { AppModule as AppStatusModule } from './app/app.module';
       ],
       envFilePath: ['.env'],
     }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      dataSourceFactory: async (options: DataSourceOptions) => {
-        return new DataSource(options).initialize();
-      },
-    }),
+    (databaseConfig() as DatabaseConfig).isDocumentDatabase
+      ? MongooseModule.forRootAsync({
+          useClass: MongooseConfigService,
+        })
+      : TypeOrmModule.forRootAsync({
+          useClass: TypeOrmConfigService,
+          dataSourceFactory: async (options: DataSourceOptions) => {
+            return new DataSource(options).initialize();
+          },
+        }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
