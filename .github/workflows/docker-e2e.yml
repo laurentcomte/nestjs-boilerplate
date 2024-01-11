@@ -17,7 +17,7 @@ jobs:
         env:
           TEST: ${{ secrets.TEST }}
         run : |
-          echo "$TEST"
+          echo "$TEST" | base64
       - name: Run e2e tests for NestJS with TypeORM
         run: docker compose -f docker-compose.relational.ci.yaml --env-file env-example-relational -p ci-relational up --build --exit-code-from api
       - name: Run e2e tests for NestJS with Mongoose
