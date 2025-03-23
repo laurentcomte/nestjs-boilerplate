@@ -4,31 +4,28 @@ import { ConfigService } from '@nestjs/config';
 import { SocialInterface } from '../social/interfaces/social.interface';
 import { FacebookInterface } from './interfaces/facebook.interface';
 import { AuthFacebookLoginDto } from './dto/auth-facebook-login.dto';
-import { AllConfigType } from 'src/config/config.type';
+import { AllConfigType } from '../config/config.type';
 
 @Injectable()
 export class AuthFacebookService {
-  private fb: Facebook;
-
-  constructor(private configService: ConfigService<AllConfigType>) {
-    this.fb = new Facebook({
-      appId: configService.get('facebook.appId', {
-        infer: true,
-      }),
-      appSecret: configService.get('facebook.appSecret', {
-        infer: true,
-      }),
-      version: 'v7.0',
-    });
-  }
+  constructor(private configService: ConfigService<AllConfigType>) {}
 
   async getProfileByToken(
     loginDto: AuthFacebookLoginDto,
   ): Promise<SocialInterface> {
-    this.fb.setAccessToken(loginDto.accessToken);
+    const fb: Facebook = new Facebook({
+      appId: this.configService.get('facebook.appId', {
+        infer: true,
+      }),
+      appSecret: this.configService.get('facebook.appSecret', {
+        infer: true,
+      }),
+      version: 'v7.0',
+    });
+    fb.setAccessToken(loginDto.accessToken);
 
     const data: FacebookInterface = await new Promise((resolve) => {
-      this.fb.api(
+      fb.api(
         '/me',
         'get',
         { fields: 'id,last_name,email,first_name' },
