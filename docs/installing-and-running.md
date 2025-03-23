@@ -2,16 +2,16 @@
 
 NestJS Boilerplate supports [TypeORM](https://www.npmjs.com/package/typeorm) and [Mongoose](https://www.npmjs.com/package/mongoose) for working with databases. By default, TypeORM uses [PostgreSQL](https://www.postgresql.org/) as the main database, but you can use any relational database.
 
-Switching between TypeORM and Mongoose is implemented based on the [Dependency Inversion Principle](https://trilon.io/blog/dependency-inversion-principle) (DIP). This makes it easy to choose the right database for your application architecture.
+Switching between TypeORM and Mongoose is implemented based on the [Hexagonal Architecture](architecture.md#hexagonal-architecture). This makes it easy to choose the right database for your application.
 
 ---
 
 ## Table of Contents <!-- omit in toc -->
 
 - [Comfortable development (PostgreSQL + TypeORM)](#comfortable-development-postgresql--typeorm)
+  - [Video guideline (PostgreSQL + TypeORM)](#video-guideline-postgresql--typeorm)
 - [Comfortable development (MongoDB + Mongoose)](#comfortable-development-mongodb--mongoose)
 - [Quick run (PostgreSQL + TypeORM)](#quick-run-postgresql--typeorm)
-  - [Video guideline](#video-guideline)
 - [Quick run (MongoDB + Mongoose)](#quick-run-mongodb--mongoose)
 - [Links](#links)
 
@@ -48,6 +48,16 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm install
    ```
 
+1. Run app configuration
+
+   > You should run this command only the first time on initialization of your project, all next time skip it.
+
+   > If you want to contribute to the boilerplate, you should NOT run this command.
+
+   ```bash
+   npm run app:config
+   ```
+
 1. Run migrations
 
    ```bash
@@ -67,6 +77,10 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    ```
 
 1. Open <http://localhost:3000>
+
+### Video guideline (PostgreSQL + TypeORM)
+
+<https://github.com/user-attachments/assets/136a16aa-f94a-4b20-8eaf-6b4262964315>
 
 ---
 
@@ -99,10 +113,14 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm install
    ```
 
-1. Run migrations
+1. Run app configuration
+
+   > You should run this command only the first time on initialization of your project, all next time skip it.
+
+   > If you want to contribute to the boilerplate, you should NOT run this command.
 
    ```bash
-   npm run migration:run
+   npm run app:config
    ```
 
 1. Run seeds
@@ -152,10 +170,6 @@ If you want quick run your app, you can use following commands:
 
 1. Open <http://localhost:3000>
 
-### Video guideline
-
-<https://user-images.githubusercontent.com/6001723/235758846-d7d97de8-dea9-46d8-ae12-8cc6b76df03d.mp4>
-
 ---
 
 ## Quick run (MongoDB + Mongoose)
@@ -202,4 +216,4 @@ If you want quick run your app, you can use following commands:
 
 Previous: [Introduction](introduction.md)
 
-Next: [Working with database](database.md)
+Next: [Architecture](architecture.md)

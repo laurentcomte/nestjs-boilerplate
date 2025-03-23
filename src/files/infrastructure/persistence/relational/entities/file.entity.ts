@@ -1,13 +1,10 @@
 import {
+  // typeorm decorators here
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  AfterLoad,
-  AfterInsert,
 } from 'typeorm';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import appConfig from '../../../../../config/app.config';
-import { AppConfig } from 'src/config/app-config.type';
+import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 
 @Entity({ name: 'file' })
 export class FileEntity extends EntityRelationalHelper {
@@ -16,12 +13,4 @@ export class FileEntity extends EntityRelationalHelper {
 
   @Column()
   path: string;
-
-  @AfterLoad()
-  @AfterInsert()
-  updatePath() {
-    if (this.path.indexOf('/') === 0) {
-      this.path = (appConfig() as AppConfig).backendDomain + this.path;
-    }
-  }
 }

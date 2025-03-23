@@ -9,10 +9,13 @@
 - [Auth via Apple](#auth-via-apple)
 - [Auth via Facebook](#auth-via-facebook)
 - [Auth via Google](#auth-via-google)
-- [Auth via Twitter](#auth-via-twitter)
+- [About JWT strategy](#about-jwt-strategy)
 - [Refresh token flow](#refresh-token-flow)
   - [Video example](#video-example)
+  - [Support login for multiple devices / Sessions](#support-login-for-multiple-devices--sessions)
 - [Logout](#logout)
+- [Q\&A](#qa)
+  - [After `POST /api/v1/auth/logout` or removing session from the database, the user can still make requests with an `access token` for some time. Why?](#after-post-apiv1authlogout-or-removing-session-from-the-database-the-user-can-still-make-requests-with-an-access-token-for-some-time-why)
 
 ---
 
@@ -37,7 +40,7 @@ sequenceDiagram
 
 ### Auth via external services or social networks flow
 
-Also you can sign up via another external services or social networks like Apple, Facebook, Google, and Twitter.
+Also you can sign up via another external services or social networks like Apple, Facebook and Google.
 
 ```mermaid
 sequenceDiagram
@@ -61,8 +64,6 @@ For auth with external services or social networks you need:
    POST /api/v1/auth/facebook/login
 
    POST /api/v1/auth/google/login
-
-   POST /api/v1/auth/twitter/login
 
    POST /api/v1/auth/apple/login
    ```
@@ -120,15 +121,30 @@ For auth with external services or social networks you need:
    GOOGLE_CLIENT_SECRET=abc
    ```
 
-## Auth via Twitter
+## About JWT strategy
 
-1. Set up your service on Twitter
-1. Change `TWITTER_CONSUMER_KEY` and `TWITTER_CONSUMER_SECRET` in `.env`
+In the `validate` method of the `src/auth/strategies/jwt.strategy.ts` file, you can see that we do not check if the user exists in the database because it is redundant, it may lose the benefits of the JWT approach and can affect the application performance.
 
-   ```text
-   TWITTER_CONSUMER_KEY=abc
-   TWITTER_CONSUMER_SECRET=abc
-   ```
+To better understand how JWT works, watch the video explanation https://www.youtube.com/watch?v=Y2H3DXDeS3Q and read this article https://jwt.io/introduction/
+
+```typescript
+// src/auth/strategies/jwt.strategy.ts
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  // ...
+
+  public validate(payload) {
+    if (!payload.id) {
+      throw new UnauthorizedException();
+    }
+
+    return payload;
+  }
+}
+```
+
+> If you need to get full user information, get it in services.
 
 ## Refresh token flow
 
@@ -140,6 +156,12 @@ For auth with external services or social networks you need:
 
 https://github.com/brocoders/nestjs-boilerplate/assets/6001723/f6fdcc89-5ec6-472b-a6fc-d24178ad1bbb
 
+### Support login for multiple devices / Sessions
+
+Boilerplate supports login for multiple devices with a Refresh Token flow. This is possible due to `sessions`. When a user logs in, a new session is created and stored in the database. The session record contains `sessionId (id)`, `userId`, and `hash`.
+
+On each `POST /api/v1/auth/refresh` request we check `hash` from the database with `hash` from the Refresh Token. If they are equal, we return new `token`, `tokenExpires`, and `refreshToken`. Then we update `hash` in the database to disallow the use of the previous Refresh Token.
+
 ## Logout
 
 1. Call following endpoint:
@@ -149,6 +171,12 @@ https://github.com/brocoders/nestjs-boilerplate/assets/6001723/f6fdcc89-5ec6-472
    ```
 
 2. Remove `access token` and `refresh token` from your client app (cookies, localStorage, etc).
+
+## Q&A
+
+### After `POST /api/v1/auth/logout` or removing session from the database, the user can still make requests with an `access token` for some time. Why?
+
+It's because we use `JWT`. `JWTs` are stateless, so we can't revoke them, but don't worry, this is the correct behavior and the access token will expire after the time specified in `AUTH_JWT_TOKEN_EXPIRES_IN` (the default value is 15 minutes). If you still need to revoke `JWT` tokens immediately, you can check if a session exists in [jwt.strategy.ts](https://github.com/brocoders/nestjs-boilerplate/blob/2896589f52d2df025f12069ba82ba4fac1db8ebd/src/auth/strategies/jwt.strategy.ts#L20-L26) on each request. However, it's not recommended because it can affect the application's performance.
 
 ---
 
